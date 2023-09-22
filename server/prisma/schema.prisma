@@ -17,38 +17,56 @@ model Usuario {
   nombre   String? //Puede ser nulo
   role     Role    @default(USER)
   password String
+  ordenes  Orden[]
 }
 
 model Videojuego {
-  id          Int      @id @default(autoincrement())
+  id          Int                 @id @default(autoincrement())
   nombre      String
   descripcion String
-  publicar    Boolean  @default(true)
-  precio      Decimal  @db.Decimal(10, 2)
-  createdAt   DateTime @default(now())
-  updatedAt   DateTime @default(now()) @updatedAt
+  publicar    Boolean             @default(true)
+  precio      Decimal             @db.Decimal(10, 2)
+  createdAt   DateTime            @default(now())
+  updatedAt   DateTime            @default(now()) @updatedAt
+  ordenes     OrdenOnVideojuego[]
+  generos     Genero[]
 }
 
 model Genero {
-  id        Int      @id @default(autoincrement())
-  nombre    String
-  updatedAt DateTime @default(now()) @updatedAt
+  id         Int          @id @default(autoincrement())
+  nombre     String
+  updatedAt  DateTime     @default(now()) @updatedAt
+  videojuego Videojuego[]
 }
 
 model Orden {
-  id         Int      @id @default(autoincrement())
-  fechaOrden DateTime @default(now())
-
-  updatedAt DateTime @default(now()) @updatedAt
+  id          Int                 @id @default(autoincrement())
+  fechaOrden  DateTime            @default(now())
+  usuarioId   Int
+  usuario     Usuario             @relation(fields: [usuarioId], references: [id])
+  updatedAt   DateTime            @default(now()) @updatedAt
+  videojuegos OrdenOnVideojuego[]
 }
 
 model OrdenOnVideojuego {
-  id        Int      @id @default(autoincrement())
+  //laves foraneas
+  //Orden
+  ordenId      Int
+  orden        Orden      @relation(fields: [ordenId], references: [id])
+  //Videojuego
+  videojuegoId Int
+  videojuego   Videojuego @relation(fields: [videojuegoId], references: [id])
+
   cantidad  Int
   updatedAt DateTime @default(now()) @updatedAt
+
+  @@id([ordenId, videojuegoId])
 }
 
 enum Role {
   USER
   ADMIN
 }
+
+// dos @ se define una llame primaria compuesta
+// npx prisma migrate dev --name "test"
