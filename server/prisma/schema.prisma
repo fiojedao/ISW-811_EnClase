@@ -1,0 +1,54 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "mysql"
+  url      = env("DATABASE_URL")
+}
+//Modelos
+model Usuario {
+  id       Int     @id @default(autoincrement())
+  email    String  @unique
+  nombre   String? //Puede ser nulo
+  role     Role    @default(USER)
+  password String
+}
+
+model Videojuego {
+  id          Int                 @id @default(autoincrement())
+  nombre      String
+  descripcion String
+  publicar    Boolean             @default(true)
+  precio      Decimal             @db.Decimal(10, 2)
+  createdAt   DateTime            @default(now())
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Genero {
+  id          Int          @id @default(autoincrement())
+  nombre      String
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model Orden {
+  id          Int                 @id @default(autoincrement())
+  fechaOrden  DateTime            @default(now())
+  
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+model OrdenOnVideojuego {
+  id          Int                 @id @default(autoincrement())
+  cantidad     Int
+  updatedAt DateTime @updatedAt @default(now())
+}
+
+enum Role {
+  USER
+  ADMIN
+}
+
